@@ -1,0 +1,10 @@
+# Dependencias del backend mock (se reinstalan con npm install)
+node_modules/
+
+# Variables de entorno locales
+.env
+
+# Build / proyecto Vite que crees para practicar
+mi-front/
+solucion-front/
+dist/

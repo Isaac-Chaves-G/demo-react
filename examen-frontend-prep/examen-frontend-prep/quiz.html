@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen Frontend React — Quiz de práctica</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 24px 16px 32px;
+        }
+
+        .quiz-container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: none;
+            max-width: 520px;
+            width: 100%;
+            padding: 18px 16px 20px;
+            display: flex;
+            flex-direction: column;
+            min-height: 640px;
+        }
+
+        .quiz-header {
+            text-align: left;
+            margin-bottom: 16px;
+        }
+
+        .quiz-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: #232323;
+            margin-bottom: 4px;
+        }
+
+        .quiz-subtitle {
+            font-size: 13px;
+            color: #9d9d9d;
+        }
+
+        .progress-text {
+            text-align: left;
+            font-size: 13px;
+            color: #9d9d9d;
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+
+        .question-text {
+            font-size: 16px;
+            font-weight: 500;
+            color: #2a2a2a;
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 16px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .options::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .options::-webkit-scrollbar-track {
+            background: #f0f0f0;
+            border-radius: 3px;
+        }
+
+        .options::-webkit-scrollbar-thumb {
+            background: #c0c0c0;
+            border-radius: 3px;
+        }
+
+        .options::-webkit-scrollbar-thumb:hover {
+            background: #a0a0a0;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 14px 16px;
+            border: 1px solid #f0f0f0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: #f8f8f8;
+        }
+
+        .option:hover:not(.selected):not(.disabled) {
+            border-color: #e6e6e6;
+            background: #f6f6f6;
+        }
+
+        .option.selected {
+            border-color: #d0d0d0;
+            background: #dedede;
+        }
+
+        .option.correct,
+        .option.wrong {
+            border-color: #f0f0f0;
+            background: #f8f8f8;
+        }
+
+        .option.disabled {
+            cursor: default;
+        }
+
+        .option-label {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+            margin-right: 10px;
+            flex-shrink: 0;
+            color: #9d9d9d;
+            width: 22px;
+        }
+
+        .option.selected .option-label {
+            color: #3a3a3a;
+        }
+
+        .option.disabled .option-text {
+            color: #bdbdbd;
+        }
+
+        .option.disabled .option-label {
+            color: #bdbdbd;
+        }
+
+        .option-text {
+            flex: 1;
+            font-size: 15px;
+            color: #3a3a3a;
+        }
+
+
+        .feedback-card {
+            padding: 14px 16px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            opacity: 0;
+            transform: translateY(8px);
+            transition: opacity 0.25s ease, transform 0.25s ease;
+        }
+
+        .feedback-card.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .feedback-card.correct {
+            background: #bfeacb;
+        }
+
+        .feedback-card.wrong {
+            background: #fff7f7;
+        }
+
+        .feedback-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .feedback-header.correct {
+            color: #697b6e;
+        }
+
+        .feedback-header.wrong {
+            color: #a42d22;
+        }
+
+        .feedback-icon {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .feedback-answer {
+            font-size: 15px;
+            color: #2a2a2a;
+        }
+
+        .feedback-text {
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .feedback-card.correct .feedback-text {
+            color: #444443;
+        }
+
+        .feedback-card.wrong .feedback-text {
+            color: #2e2e2f;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin-top: 24px;
+            min-height: 52px;
+        }
+
+        .btn {
+            padding: 10px 22px;
+            border-radius: 999px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+            min-width: 120px;
+        }
+
+        .btn-secondary {
+            background: #ffffff;
+            color: #6b7280;
+            border: 1px solid #e2e2e2;
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: #e5e5e5;
+        }
+
+        .btn-secondary:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: #424cf7;
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            opacity: 0.95;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(66, 76, 247, 0.25);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+
+        .completion-container {
+            text-align: center;
+            display: none;
+        }
+
+        .completion-container.show {
+            display: block;
+        }
+
+        .completion-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .completion-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 12px;
+        }
+
+        .completion-subtitle {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .stat-card.score {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .stat-card.score .stat-label {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .stat-card.score .stat-value {
+            color: white;
+        }
+
+        .completion-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .hint-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: #4e4e4e;
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+        }
+
+        .hint-toggle .chevron {
+            display: inline-block;
+            transition: transform 0.2s ease;
+        }
+
+        .hint-toggle.open .chevron {
+            transform: rotate(180deg);
+        }
+
+        .hint-panel {
+            padding: 12px 14px;
+            background: #ebecf8;
+            border-radius: 12px;
+            display: none;
+            opacity: 0;
+            transform: translateY(6px);
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+
+        .hint-panel.show {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .hint-title {
+            font-weight: 600;
+            font-size: 13px;
+            color: #4e4e4e;
+            margin-bottom: 6px;
+        }
+
+        .hint-text {
+            font-size: 13px;
+            color: #474749;
+            line-height: 1.5;
+        }
+
+        .hint-slot {
+            min-height: 72px;
+        }
+
+        .quiz-footer {
+            margin-top: auto;
+        }
+
+        .question-container {
+            display: none;
+        }
+
+        .question-container.active {
+            display: block;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.18/dist/katex.min.css">
+</head>
+<body>
+    <div class="quiz-container">
+        <div class="quiz-header">
+            <div class="quiz-title">Examen Frontend React — Quiz de práctica</div>
+            <div class="quiz-subtitle">Based on 1 source</div>
+        </div>
+
+        <div id="quiz-content">
+            <!-- Questions will be rendered here -->
+        </div>
+
+        <div id="completion-screen" class="completion-container">
+            <div class="completion-icon">🎉</div>
+            <div class="completion-title">You did it! Quiz Complete.</div>
+            <div class="completion-subtitle">Here's how you performed</div>
+
+            <div class="stats-grid">
+                <div class="stat-card score">
+                    <div class="stat-label">Score</div>
+                    <div class="stat-value" id="score-value">0/16</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Accuracy</div>
+                    <div class="stat-value" id="accuracy-value">0%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Right</div>
+                    <div class="stat-value" id="right-value">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Wrong</div>
+                    <div class="stat-value" id="wrong-value">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Skipped</div>
+                    <div class="stat-value" id="skipped-value">0</div>
+                </div>
+            </div>
+
+            <div class="completion-buttons">
+                <button class="btn btn-secondary" onclick="reviewQuiz()">Review Quiz</button>
+                <button class="btn btn-primary" onclick="retakeQuiz()">Retake Quiz</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.18/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.18/dist/contrib/auto-render.min.js"></script>
+    <script>
+        const questions = [{"question": "¿Qué es un componente de React?", "options": ["Una etiqueta HTML especial del navegador", "Una función que devuelve JSX y cuyo nombre empieza en mayúscula", "Un archivo de configuración de Vite", "Una clase de CSS reutilizable"], "correctIndex": 1, "hint": "Es código JavaScript que produce interfaz.", "correctExplanation": "Correcto. Un componente es una función que devuelve JSX; se usa como <MiComponente />.", "wrongExplanation": "Un componente es una función que devuelve JSX (HTML con superpoderes), con nombre en Mayúscula."}, {"question": "¿En qué dirección viajan las props?", "options": ["Del hijo al padre", "Del padre al hijo", "En ambas direcciones automáticamente", "Entre componentes hermanos directamente"], "correctIndex": 1, "hint": "Piensa en quién 'contiene' a quién.", "correctExplanation": "Correcto. Las props bajan del padre al hijo y son de solo lectura para el hijo.", "wrongExplanation": "Las props bajan del PADRE al HIJO. Para que el hijo 'avise' al padre se usa un callback."}, {"question": "¿Cómo se actualiza correctamente el estado creado con useState?", "options": ["Asignando directamente: contador = 5", "Con el setter: setContador(5)", "Modificando el DOM a mano", "Con una variable global"], "correctIndex": 1, "hint": "Solo una de estas hace que React redibuje.", "correctExplanation": "Correcto. Solo el setter (setContador) avisa a React para re-renderizar.", "wrongExplanation": "Siempre con el setter (setContador(5)). Asignar a mano no provoca re-render."}, {"question": "useEffect(() => { cargar(); }, []) — ¿cuándo se ejecuta?", "options": ["En cada render", "Nunca, está vacío", "Una sola vez, al montar el componente", "Solo cuando el usuario hace clic"], "correctIndex": 2, "hint": "Fíjate en el array de dependencias vacío.", "correctExplanation": "Correcto. El array [] significa 'solo al montar'. Ideal para cargar la lista al entrar.", "wrongExplanation": "Con [] se ejecuta una sola vez al montar. Por eso sirve para el fetch inicial de la lista."}, {"question": "El profe recalcó pasar funciones entre componentes. ¿Cómo se hace?", "options": ["Guardando la función en localStorage", "Pasando la función como una prop (callback) al hijo", "Usando una variable global window.fn", "No se puede pasar funciones, solo texto y números"], "correctIndex": 1, "hint": "Una prop también puede ser una función.", "correctExplanation": "Correcto. El padre pasa onBorrar={...} y el hijo la llama con onClick={() => onBorrar(id)}.", "wrongExplanation": "Se pasa como prop (callback): <Card onBorrar={borrar} /> y el hijo la llama al interactuar."}, {"question": "¿Cuál es la diferencia entre onClick={fn} y onClick={fn()}?", "options": ["Son idénticos", "{fn} ejecuta al clic; {fn()} ejecuta de una vez al renderizar", "{fn()} es más rápido", "{fn} no funciona en React"], "correctIndex": 1, "hint": "Los paréntesis ejecutan la función inmediatamente.", "correctExplanation": "Correcto. {fn} pasa la función (se ejecuta al clic). {fn()} la EJECUTA al renderizar (error común).", "wrongExplanation": "{fn} se ejecuta al hacer clic; {fn()} se ejecuta de una vez al renderizar. Para argumentos: {() => fn(arg)}."}, {"question": "El día del examen, ¿qué haces ANTES de escribir React?", "options": ["Diseñar la UI bonita en Figma", "Leer el backend: rutas, *Request, *Response, enum y credenciales", "Modificar el backend para que sea más fácil", "Instalar Redux y Tailwind"], "correctIndex": 1, "hint": "El examen no es adivinar el API, es leerlo. (Y el backend NO se toca.)", "correctExplanation": "Correcto. Leer el contrato del backend te dice exactamente qué pedir y qué mandar.", "wrongExplanation": "Primero lee el backend (controllers, DTOs, enum, data.sql). El backend NO se modifica."}, {"question": "¿Cómo defines la URL del backend en un proyecto Vite?", "options": ["process.env.API_URL en config.js", "VITE_API_URL en .env, leída con import.meta.env.VITE_API_URL", "Una constante hardcodeada en cada archivo", "En el package.json"], "correctIndex": 1, "hint": "La variable debe empezar con un prefijo especial.", "correctExplanation": "Correcto. En Vite la variable debe empezar con VITE_ y se lee con import.meta.env.", "wrongExplanation": "En .env: VITE_API_URL=... (debe empezar con VITE_), y se lee con import.meta.env.VITE_API_URL. Reinicia Vite tras cambiarla."}, {"question": "¿Qué hace el interceptor de request de axios en este examen?", "options": ["Cachea las respuestas", "Agrega el header Authorization: Bearer <token> en cada petición", "Convierte XML a JSON", "Bloquea peticiones lentas"], "correctIndex": 1, "hint": "Evita repetir el header en cada llamada.", "correctExplanation": "Correcto. Lee el token de localStorage y mete Authorization en todas las requests automáticamente.", "wrongExplanation": "Mete el header Authorization: Bearer <token> en cada petición, leyendo el token de localStorage."}, {"question": "El login responde con un objeto. ¿Cómo se llama típicamente el campo del token?", "options": ["token", "jwt", "accessToken", "bearer"], "correctIndex": 2, "hint": "Confírmalo leyendo AuthResponse en el backend.", "correctExplanation": "Correcto. Es accessToken: guardas res.accessToken. (Siempre verifícalo en el backend.)", "wrongExplanation": "En el backend del curso es accessToken. Léelo en AuthResponse para estar seguro."}, {"question": "¿Por qué se guarda el token en localStorage?", "options": ["Para que sea más seguro que una cookie", "Para que sobreviva recargas y el interceptor lo lea en cada request", "Porque React lo exige", "Para encriptarlo automáticamente"], "correctIndex": 1, "hint": "¿Qué pasa si el usuario refresca la página?", "correctExplanation": "Correcto. localStorage sobrevive recargas; el interceptor lo lee de ahí para autenticar.", "wrongExplanation": "Para que sobreviva recargas y el interceptor de axios lo use en cada llamada."}, {"question": "Al hacer items.map(...) para pintar la lista, ¿qué NO puede faltar?", "options": ["Un useEffect dentro del map", "La prop key única en cada elemento", "Un try/catch", "Un id generado con Math.random()"], "correctIndex": 1, "hint": "React la necesita para identificar cada elemento de la lista.", "correctExplanation": "Correcto. key={item.id} permite a React actualizar/borrar bien la lista.", "wrongExplanation": "Falta la key única (key={item.id}). Sin ella, React advierte y puede pintar mal al actualizar."}, {"question": "El POST para crear exige userId, pero el JWT solo trae el email. ¿De dónde sacas el userId?", "options": ["Lo inventas con un número al azar", "Lo lees de la lista ya cargada: items[0]?.userId", "Modificas el backend para que no lo pida", "Lo pides en otro endpoint /userId"], "correctIndex": 1, "hint": "El GET de la lista sí devuelve el userId de cada ítem.", "correctExplanation": "Correcto. Sácalo de la lista: data.userId = items[0]?.userId. (Recuerda: el backend no se toca.)", "wrongExplanation": "Sácalo de la lista cargada (items[0]?.userId). El GET devuelve userId aunque el token no lo tenga."}, {"question": "Al cambiar el estado con PUT, ¿qué debes mandar en el body?", "options": ["Solo { estado: nuevoEstado }", "El objeto completo (nombre, estado, userId, etc.) con el estado cambiado", "Nada, el PUT no lleva body", "Solo el id"], "correctIndex": 1, "hint": "¿Qué pasa con los campos que NO mandas?", "correctExplanation": "Correcto. Manda el objeto completo; si solo mandas el estado, el resto puede quedar en null.", "wrongExplanation": "Manda el objeto completo con el estado cambiado. Mandar solo { estado } puede poner el resto en null."}, {"question": "El login no hace nada y la página se recarga. ¿Causa más probable?", "options": ["Falta instalar React", "Falta e.preventDefault() en el onSubmit", "El backend está caído", "Falta un useEffect"], "correctIndex": 1, "hint": "Por defecto, un formulario recarga la página al enviarse.", "correctExplanation": "Correcto. Sin e.preventDefault() el form recarga la página y se pierde todo.", "wrongExplanation": "Falta e.preventDefault() al inicio del onSubmit. Sin él, el formulario recarga la página."}, {"question": "Tras crear o borrar un ítem, ¿cómo refrescas la lista de forma simple y segura?", "options": ["Recargando toda la página con location.reload()", "Volviendo a llamar al GET (cargar())", "Editando el DOM a mano", "No hace falta refrescar"], "correctIndex": 1, "hint": "La opción más segura vuelve a pedir los datos al backend.", "correctExplanation": "Correcto. await cargar() vuelve a hacer el GET y garantiza datos correctos sin pensar.", "wrongExplanation": "Vuelve a hacer el GET (cargar()). Es lo más simple y seguro; evita inconsistencias en el estado."}];
+        const totalQuestions = questions.length;
+        let currentQuestionIndex = 0;
+        let userAnswers = []; // Store user's answers {questionIndex, selectedIndex, isCorrect}
+        let isReviewMode = false;
+
+        function renderMath(target) {
+            if (!target || typeof renderMathInElement !== 'function') return;
+            renderMathInElement(target, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '$', right: '$', display: false},
+                    {left: '\(', right: '\)', display: false},
+                    {left: '\[', right: '\]', display: true}
+                ],
+                throwOnError: false
+            });
+        }
+
+        function initQuiz() {
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            const quizContent = document.getElementById('quiz-content');
+            const question = questions[currentQuestionIndex];
+            const userAnswer = userAnswers[currentQuestionIndex];
+
+            const isAnswered = userAnswer !== undefined;
+
+            // Determine button states
+            const showPrevious = currentQuestionIndex > 0;
+            const showNext = isAnswered && currentQuestionIndex < totalQuestions - 1;
+            const showFinish = isAnswered && currentQuestionIndex === totalQuestions - 1 && !isReviewMode;
+            const showFinishReview = isReviewMode && currentQuestionIndex === totalQuestions - 1;
+            const showHint = !!question.hint;
+
+            let optionsHtml = '';
+            question.options.forEach((option, index) => {
+                const letter = String.fromCharCode(65 + index); // A, B, C, D
+
+                if (isAnswered) {
+                    if (index === question.correctIndex) {
+                        const correctExplain = question.correctExplanation || question.explanation || '';
+                        optionsHtml += `
+                            <div class="feedback-card correct show">
+                                <div class="feedback-answer">${letter}. ${option}</div>
+                                <div class="feedback-header correct">
+                                    <span class="feedback-icon">✓</span>
+                                    <span>Right answer</span>
+                                </div>
+                                <div class="feedback-text">${correctExplain}</div>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    if (!userAnswer.isCorrect && index === userAnswer.selectedIndex) {
+                        const wrongExplain = question.wrongExplanation || question.explanation || '';
+                        optionsHtml += `
+                            <div class="feedback-card wrong show">
+                                <div class="feedback-answer">${letter}. ${option}</div>
+                                <div class="feedback-header wrong">
+                                    <span class="feedback-icon">✕</span>
+                                    <span>Not quite</span>
+                                </div>
+                                <div class="feedback-text">${wrongExplain}</div>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    optionsHtml += `
+                        <div class="option disabled" data-index="${index}">
+                            <span class="option-label">${letter}.</span>
+                            <span class="option-text">${option}</span>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const optionClass = index === (userAnswer ? userAnswer.selectedIndex : -1) ? 'option selected' : 'option';
+                optionsHtml += `
+                    <div class="${optionClass}" onclick="selectAnswer(${index})" data-index="${index}">
+                        <span class="option-label">${letter}.</span>
+                        <span class="option-text">${option}</span>
+                    </div>
+                `;
+            });
+
+            let hintHtml = '';
+            if (showHint) {
+                hintHtml = `
+                    <button class="hint-toggle" id="hint-toggle" onclick="toggleHint()">
+                        <span>Hint</span>
+                        <span class="chevron">⌃</span>
+                    </button>
+                    <div id="hint-panel" class="hint-panel">
+                        <div class="hint-title">Hint</div>
+                        <div class="hint-text">${question.hint}</div>
+                    </div>
+                `;
+            }
+
+            let buttonsHtml = `
+                <div class="quiz-footer">
+                    <div class="buttons">
+                        <div style="display: flex; gap: 12px;">
+                            <button class="btn btn-secondary" onclick="previousQuestion()" ${showPrevious ? '' : 'disabled'}>
+                                Previous
+                            </button>
+                        </div>
+                        <div>
+                            ${showNext ? '<button class="btn btn-primary" onclick="nextQuestion()">Next</button>' : ''}
+                            ${showFinish ? '<button class="btn btn-primary" onclick="finishQuiz()">Finish Quiz</button>' : ''}
+                            ${showFinishReview ? '<button class="btn btn-primary" onclick="finishReview()">Finish Review</button>' : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            quizContent.innerHTML = `
+                <div class="progress-text">${currentQuestionIndex + 1} / ${totalQuestions}</div>
+                <div class="question-text">${question.question}</div>
+                <div class="options">
+                    ${optionsHtml}
+                </div>
+                <div class="hint-slot">
+                    ${hintHtml}
+                </div>
+                ${buttonsHtml}
+            `;
+            renderMath(quizContent);
+        }
+
+        function selectAnswer(selectedIndex) {
+            const question = questions[currentQuestionIndex];
+            const isCorrect = selectedIndex === question.correctIndex;
+
+            // Store the answer
+            userAnswers[currentQuestionIndex] = {
+                questionIndex: currentQuestionIndex,
+                selectedIndex: selectedIndex,
+                isCorrect: isCorrect
+            };
+
+            // Re-render to show feedback
+            renderQuestion();
+        }
+
+        function toggleHint() {
+            const hintPanel = document.getElementById('hint-panel');
+            const hintToggle = document.getElementById('hint-toggle');
+            if (hintPanel) {
+                hintPanel.classList.toggle('show');
+            }
+            if (hintToggle) {
+                hintToggle.classList.toggle('open');
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < totalQuestions - 1) {
+                currentQuestionIndex++;
+                renderQuestion();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                renderQuestion();
+            }
+        }
+
+        function finishQuiz() {
+            showCompletionScreen();
+        }
+
+        function showCompletionScreen() {
+            const quizContent = document.getElementById('quiz-content');
+            const completionScreen = document.getElementById('completion-screen');
+
+            // Calculate stats
+            const answeredQuestions = userAnswers.filter(a => a !== undefined);
+            const correctAnswers = userAnswers.filter(a => a && a.isCorrect).length;
+            const wrongAnswers = userAnswers.filter(a => a && !a.isCorrect).length;
+            const skipped = totalQuestions - answeredQuestions.length;
+            const accuracy = answeredQuestions.length > 0
+                ? Math.round((correctAnswers / answeredQuestions.length) * 100)
+                : 0;
+
+            // Update stats
+            document.getElementById('score-value').textContent = `${correctAnswers}/${totalQuestions}`;
+            document.getElementById('accuracy-value').textContent = `${accuracy}%`;
+            document.getElementById('right-value').textContent = correctAnswers;
+            document.getElementById('wrong-value').textContent = wrongAnswers;
+            document.getElementById('skipped-value').textContent = skipped;
+
+            // Show completion screen
+            quizContent.style.display = 'none';
+            completionScreen.classList.add('show');
+        }
+
+        function reviewQuiz() {
+            isReviewMode = true;
+            currentQuestionIndex = 0;
+            const quizContent = document.getElementById('quiz-content');
+            const completionScreen = document.getElementById('completion-screen');
+
+            quizContent.style.display = 'block';
+            completionScreen.classList.remove('show');
+            renderQuestion();
+        }
+
+        function finishReview() {
+            showCompletionScreen();
+        }
+
+        function retakeQuiz() {
+            isReviewMode = false;
+            currentQuestionIndex = 0;
+            userAnswers = [];
+            const quizContent = document.getElementById('quiz-content');
+            const completionScreen = document.getElementById('completion-screen');
+
+            quizContent.style.display = 'block';
+            completionScreen.classList.remove('show');
+            renderQuestion();
+        }
+
+        // Initialize quiz on page load
+        initQuiz();
+    </script>
+</body>
+</html>

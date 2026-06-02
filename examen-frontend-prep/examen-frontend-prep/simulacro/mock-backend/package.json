@@ -1,0 +1,14 @@
+{
+  "name": "simulacro-mock-backend-reservas",
+  "version": "1.0.0",
+  "description": "Backend mock para el simulacro de examen frontend (Reservas de Hotel). Imita el backend Spring real: login JWT + CRUD + CORS.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2"
+  }
+}

@@ -1,0 +1,208 @@
+{
+  "title": "Examen Frontend React — Quiz de práctica",
+  "questions": [
+    {
+      "question": "¿Qué es un componente de React?",
+      "options": [
+        "Una etiqueta HTML especial del navegador",
+        "Una función que devuelve JSX y cuyo nombre empieza en mayúscula",
+        "Un archivo de configuración de Vite",
+        "Una clase de CSS reutilizable"
+      ],
+      "correctIndex": 1,
+      "hint": "Es código JavaScript que produce interfaz.",
+      "correctExplanation": "Correcto. Un componente es una función que devuelve JSX; se usa como <MiComponente />.",
+      "wrongExplanation": "Un componente es una función que devuelve JSX (HTML con superpoderes), con nombre en Mayúscula."
+    },
+    {
+      "question": "¿En qué dirección viajan las props?",
+      "options": [
+        "Del hijo al padre",
+        "Del padre al hijo",
+        "En ambas direcciones automáticamente",
+        "Entre componentes hermanos directamente"
+      ],
+      "correctIndex": 1,
+      "hint": "Piensa en quién 'contiene' a quién.",
+      "correctExplanation": "Correcto. Las props bajan del padre al hijo y son de solo lectura para el hijo.",
+      "wrongExplanation": "Las props bajan del PADRE al HIJO. Para que el hijo 'avise' al padre se usa un callback."
+    },
+    {
+      "question": "¿Cómo se actualiza correctamente el estado creado con useState?",
+      "options": [
+        "Asignando directamente: contador = 5",
+        "Con el setter: setContador(5)",
+        "Modificando el DOM a mano",
+        "Con una variable global"
+      ],
+      "correctIndex": 1,
+      "hint": "Solo una de estas hace que React redibuje.",
+      "correctExplanation": "Correcto. Solo el setter (setContador) avisa a React para re-renderizar.",
+      "wrongExplanation": "Siempre con el setter (setContador(5)). Asignar a mano no provoca re-render."
+    },
+    {
+      "question": "useEffect(() => { cargar(); }, []) — ¿cuándo se ejecuta?",
+      "options": [
+        "En cada render",
+        "Nunca, está vacío",
+        "Una sola vez, al montar el componente",
+        "Solo cuando el usuario hace clic"
+      ],
+      "correctIndex": 2,
+      "hint": "Fíjate en el array de dependencias vacío.",
+      "correctExplanation": "Correcto. El array [] significa 'solo al montar'. Ideal para cargar la lista al entrar.",
+      "wrongExplanation": "Con [] se ejecuta una sola vez al montar. Por eso sirve para el fetch inicial de la lista."
+    },
+    {
+      "question": "El profe recalcó pasar funciones entre componentes. ¿Cómo se hace?",
+      "options": [
+        "Guardando la función en localStorage",
+        "Pasando la función como una prop (callback) al hijo",
+        "Usando una variable global window.fn",
+        "No se puede pasar funciones, solo texto y números"
+      ],
+      "correctIndex": 1,
+      "hint": "Una prop también puede ser una función.",
+      "correctExplanation": "Correcto. El padre pasa onBorrar={...} y el hijo la llama con onClick={() => onBorrar(id)}.",
+      "wrongExplanation": "Se pasa como prop (callback): <Card onBorrar={borrar} /> y el hijo la llama al interactuar."
+    },
+    {
+      "question": "¿Cuál es la diferencia entre onClick={fn} y onClick={fn()}?",
+      "options": [
+        "Son idénticos",
+        "{fn} ejecuta al clic; {fn()} ejecuta de una vez al renderizar",
+        "{fn()} es más rápido",
+        "{fn} no funciona en React"
+      ],
+      "correctIndex": 1,
+      "hint": "Los paréntesis ejecutan la función inmediatamente.",
+      "correctExplanation": "Correcto. {fn} pasa la función (se ejecuta al clic). {fn()} la EJECUTA al renderizar (error común).",
+      "wrongExplanation": "{fn} se ejecuta al hacer clic; {fn()} se ejecuta de una vez al renderizar. Para argumentos: {() => fn(arg)}."
+    },
+    {
+      "question": "El día del examen, ¿qué haces ANTES de escribir React?",
+      "options": [
+        "Diseñar la UI bonita en Figma",
+        "Leer el backend: rutas, *Request, *Response, enum y credenciales",
+        "Modificar el backend para que sea más fácil",
+        "Instalar Redux y Tailwind"
+      ],
+      "correctIndex": 1,
+      "hint": "El examen no es adivinar el API, es leerlo. (Y el backend NO se toca.)",
+      "correctExplanation": "Correcto. Leer el contrato del backend te dice exactamente qué pedir y qué mandar.",
+      "wrongExplanation": "Primero lee el backend (controllers, DTOs, enum, data.sql). El backend NO se modifica."
+    },
+    {
+      "question": "¿Cómo defines la URL del backend en un proyecto Vite?",
+      "options": [
+        "process.env.API_URL en config.js",
+        "VITE_API_URL en .env, leída con import.meta.env.VITE_API_URL",
+        "Una constante hardcodeada en cada archivo",
+        "En el package.json"
+      ],
+      "correctIndex": 1,
+      "hint": "La variable debe empezar con un prefijo especial.",
+      "correctExplanation": "Correcto. En Vite la variable debe empezar con VITE_ y se lee con import.meta.env.",
+      "wrongExplanation": "En .env: VITE_API_URL=... (debe empezar con VITE_), y se lee con import.meta.env.VITE_API_URL. Reinicia Vite tras cambiarla."
+    },
+    {
+      "question": "¿Qué hace el interceptor de request de axios en este examen?",
+      "options": [
+        "Cachea las respuestas",
+        "Agrega el header Authorization: Bearer <token> en cada petición",
+        "Convierte XML a JSON",
+        "Bloquea peticiones lentas"
+      ],
+      "correctIndex": 1,
+      "hint": "Evita repetir el header en cada llamada.",
+      "correctExplanation": "Correcto. Lee el token de localStorage y mete Authorization en todas las requests automáticamente.",
+      "wrongExplanation": "Mete el header Authorization: Bearer <token> en cada petición, leyendo el token de localStorage."
+    },
+    {
+      "question": "El login responde con un objeto. ¿Cómo se llama típicamente el campo del token?",
+      "options": ["token", "jwt", "accessToken", "bearer"],
+      "correctIndex": 2,
+      "hint": "Confírmalo leyendo AuthResponse en el backend.",
+      "correctExplanation": "Correcto. Es accessToken: guardas res.accessToken. (Siempre verifícalo en el backend.)",
+      "wrongExplanation": "En el backend del curso es accessToken. Léelo en AuthResponse para estar seguro."
+    },
+    {
+      "question": "¿Por qué se guarda el token en localStorage?",
+      "options": [
+        "Para que sea más seguro que una cookie",
+        "Para que sobreviva recargas y el interceptor lo lea en cada request",
+        "Porque React lo exige",
+        "Para encriptarlo automáticamente"
+      ],
+      "correctIndex": 1,
+      "hint": "¿Qué pasa si el usuario refresca la página?",
+      "correctExplanation": "Correcto. localStorage sobrevive recargas; el interceptor lo lee de ahí para autenticar.",
+      "wrongExplanation": "Para que sobreviva recargas y el interceptor de axios lo use en cada llamada."
+    },
+    {
+      "question": "Al hacer items.map(...) para pintar la lista, ¿qué NO puede faltar?",
+      "options": [
+        "Un useEffect dentro del map",
+        "La prop key única en cada elemento",
+        "Un try/catch",
+        "Un id generado con Math.random()"
+      ],
+      "correctIndex": 1,
+      "hint": "React la necesita para identificar cada elemento de la lista.",
+      "correctExplanation": "Correcto. key={item.id} permite a React actualizar/borrar bien la lista.",
+      "wrongExplanation": "Falta la key única (key={item.id}). Sin ella, React advierte y puede pintar mal al actualizar."
+    },
+    {
+      "question": "El POST para crear exige userId, pero el JWT solo trae el email. ¿De dónde sacas el userId?",
+      "options": [
+        "Lo inventas con un número al azar",
+        "Lo lees de la lista ya cargada: items[0]?.userId",
+        "Modificas el backend para que no lo pida",
+        "Lo pides en otro endpoint /userId"
+      ],
+      "correctIndex": 1,
+      "hint": "El GET de la lista sí devuelve el userId de cada ítem.",
+      "correctExplanation": "Correcto. Sácalo de la lista: data.userId = items[0]?.userId. (Recuerda: el backend no se toca.)",
+      "wrongExplanation": "Sácalo de la lista cargada (items[0]?.userId). El GET devuelve userId aunque el token no lo tenga."
+    },
+    {
+      "question": "Al cambiar el estado con PUT, ¿qué debes mandar en el body?",
+      "options": [
+        "Solo { estado: nuevoEstado }",
+        "El objeto completo (nombre, estado, userId, etc.) con el estado cambiado",
+        "Nada, el PUT no lleva body",
+        "Solo el id"
+      ],
+      "correctIndex": 1,
+      "hint": "¿Qué pasa con los campos que NO mandas?",
+      "correctExplanation": "Correcto. Manda el objeto completo; si solo mandas el estado, el resto puede quedar en null.",
+      "wrongExplanation": "Manda el objeto completo con el estado cambiado. Mandar solo { estado } puede poner el resto en null."
+    },
+    {
+      "question": "El login no hace nada y la página se recarga. ¿Causa más probable?",
+      "options": [
+        "Falta instalar React",
+        "Falta e.preventDefault() en el onSubmit",
+        "El backend está caído",
+        "Falta un useEffect"
+      ],
+      "correctIndex": 1,
+      "hint": "Por defecto, un formulario recarga la página al enviarse.",
+      "correctExplanation": "Correcto. Sin e.preventDefault() el form recarga la página y se pierde todo.",
+      "wrongExplanation": "Falta e.preventDefault() al inicio del onSubmit. Sin él, el formulario recarga la página."
+    },
+    {
+      "question": "Tras crear o borrar un ítem, ¿cómo refrescas la lista de forma simple y segura?",
+      "options": [
+        "Recargando toda la página con location.reload()",
+        "Volviendo a llamar al GET (cargar())",
+        "Editando el DOM a mano",
+        "No hace falta refrescar"
+      ],
+      "correctIndex": 1,
+      "hint": "La opción más segura vuelve a pedir los datos al backend.",
+      "correctExplanation": "Correcto. await cargar() vuelve a hacer el GET y garantiza datos correctos sin pensar.",
+      "wrongExplanation": "Vuelve a hacer el GET (cargar()). Es lo más simple y seguro; evita inconsistencias en el estado."
+    }
+  ]
+}
